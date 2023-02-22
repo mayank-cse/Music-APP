@@ -1,9 +1,15 @@
+from flask import current_app
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
-from .models import Note
+from .models import Note, Track
 from . import db
 import json
-
+from flask_uploads import UploadSet, configure_uploads, AUDIO, UploadNotAllowed
+from flask import Flask, render_template, request
+from flask_sqlalchemy import SQLAlchemy
+from .script import TrackInfo
+from dotenv import load_dotenv
+import os
 views = Blueprint('views', __name__)
 
 
@@ -35,3 +41,95 @@ def delete_note():
             db.session.commit()
 
     return jsonify({})
+
+
+@views.route("/listen", methods=["GET"])
+def listen():
+    tracks = Track.query.all()
+    return render_template("listen.html",tracks=tracks)
+
+# current_app.config["UPLOADED_AUDIO_DEST"] = "static/songs"
+audio = UploadSet("audio", AUDIO)
+# configure_uploads(current_app, audio)
+# app.config["SECRET_KEY"] = "`-qR49d-7w7}FMRIrjAoenyhhxDXF)*2ycRmkxDx"
+sep = os.path.sep
+path = os.getcwd() + os.path.join(sep, "website\static" + sep, "songs")
+# C:\Users\mayan\OneDrive\Desktop\AuthFlask\Music-APP-\website\static\songs\Songs.PK_Unchained_Melodies_Encore_-_03_-_Ya_Rabba_Salaam-E-Ishq_1.mp3
+@views.route("/update", methods=["GET", "POST"])
+def update():
+    if request.method == "POST" and "audio" in request.files:
+        print(1111111)
+        try:
+            filename = audio.save(request.files["audio"])
+            
+            uploaded_track_path = filename
+            
+            if filename and uploaded_track_path:
+                print(path + sep + uploaded_track_path)
+                track_info = TrackInfo.All(path + sep + uploaded_track_path)
+                artist = track_info["artist"]
+                if artist == None:
+                    artist = "Unknown artist"
+                title = track_info["title"]
+                if title == None:
+                    title = "Unknown track"
+                duration = track_info["track_lenght"]
+                new_track = Track(
+                    track_title=title,
+                    track_artist=artist,
+                    track_location=uploaded_track_path,
+                    track_duration=duration,
+                )
+                db.session.add(new_track)
+                db.session.commit()
+            else:
+                # else block to handle weird thing flask-uploads does, if any errors occur remove the file
+                file = path + sep + uploaded_track_path
+                os.remove(file)
+
+            return filename + " " + "has been added to the library"
+        except UploadNotAllowed as err:
+
+            return "<h1>sorry file type is not allowed :( </h1>", 406
+
+    return render_template("upload.html")
+#logout
+@views.route('/logout')
+def logout():
+	db.session.clear()
+	flash('you are now logout','success')
+	return render_template('login.html')
+#search
+@views.route('/new',methods=['POST'])
+def new():
+	string=""
+	co=request.form['give']
+	song=co
+	song_name=co+'.mp3'
+	cur=db.connection.cursor()
+	result=cur.execute("SELECT * FROM songs_list WHERE song_name=%s",[song_name])
+	albu69=cur.fetchall()
+	if result>0:
+		return render_template('search.html',albu=albu69)
+	else:
+		try:
+			page = request.get("https://www.youtube.com/results?search_query="+song)
+			soup = BeautifulSoup(page.text,'html.parser')
+			for div in soup.find_all('div', { "class" : "yt-lockup-video" }):
+				if div.get("data-context-item-id") != None:
+					video_id = div.get("data-context-item-id")
+					break
+			os.system('youtube-dl --extract-audio --audio-format mp3 -o "akhil.mp3" https://www.youtube.com/watch?v='+video_id)
+			os.system("mv *.mp3 ./static/music/")
+			os.rename("static/music/akhil.mp3","static/music/"+song_name)
+			string="/static/music/"+song_name
+			cur=db.connection.cursor()
+			cur.execute("INSERT INTO songs_list(path,album,song_name) VALUES (%s,%s,%s)",(string,"NA",song_name))
+			db.connection.commit()
+			result=cur.execute("SELECT * FROM songs_list WHERE song_name=%s",[song_name])
+			albu99=cur.fetchall()
+			return render_template('search.html',albu=albu99)
+		except NameError:
+			flash('Song Not Found','success')
+			return render_template('dashboard.html')
+

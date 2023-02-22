@@ -2,15 +2,25 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
+from flask_uploads import UploadSet, configure_uploads, AUDIO, UploadNotAllowed
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
+# # database config
+# project_dir = os.path.dirname(os.path.abspath(__file__))
+# db_file = "sqlite:///{}".format(os.path.join(project_dir, "flaskify.db"))
+# views.config["SQLALCHEMY_DATABASE_URI"] = db_file
+# views.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False 	
+# db = SQLAlchemy(views)
 
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config["UPLOADED_AUDIO_DEST"] = "website/static/songs"
+    audio = UploadSet("audio", AUDIO)
+    configure_uploads(app, audio)
     db.init_app(app)
 
     from .views import views
@@ -19,7 +29,7 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    from .models import User, Note
+    from .models import User, Note, Track
     
     with app.app_context():
         db.create_all()
@@ -33,6 +43,7 @@ def create_app():
         return User.query.get(int(id))
 
     return app
+    
 
 
 def create_database(app):
