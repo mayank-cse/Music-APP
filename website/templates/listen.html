@@ -28,11 +28,13 @@
           </p>
           <div class="container">
             <audio controls class="card-text">
-
+              
                 <source class="block" src="{{url_for('static', filename='songs/' + song.track_location) }}">  
-            
-            
+              
             </audio>
+            <form action="/download" class="navbar-form navbar-left" method="POST">
+              <div class="filen"><button type="submit" name="download" value={{song.track_location}} id="download" class="btn btn-primary">DOWNLOAD</button></div>
+            </form>
           </div>
         </div>
       </div>
