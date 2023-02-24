@@ -1,6 +1,7 @@
 from flask import current_app
 from flask import Blueprint, render_template, request, flash, jsonify
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user,logout_user
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask import send_file, send_from_directory
 from .models import Note, Track
 from . import db
@@ -16,7 +17,7 @@ from sqlalchemy import create_engine
 views = Blueprint('views', __name__)
 
 
-@views.route('/', methods=['GET', 'POST'])
+@views.route('/note', methods=['GET', 'POST'])
 @login_required
 def home():
     if request.method == 'POST': 
@@ -32,6 +33,13 @@ def home():
 
     return render_template("home.html", user=current_user)
 
+
+@views.route('/', methods = ['GET','POST'])
+@login_required
+def dashboard():
+    # if request.method == 'POST':
+    tracks = Track.query.all()
+    return render_template("dashboard.html",tracks=tracks, user=current_user)
 
 @views.route('/delete-note', methods=['POST'])
 def delete_note():  
@@ -97,27 +105,21 @@ def update():
             return "<h1>sorry file type is not allowed :( </h1>", 406
 
     return render_template("upload.html")
-#logout
-@views.route('/logout')
-def logout():
-	db.session.clear()
-	flash('you are now logout','success')
-	return render_template('login.html')
+
 
 #search
-@views.route('/new',methods=['POST'])
-def new():
-    if request.method == "POST":
-        co=request.form['give']
-        tracks = Track.query.all()
-        for song in tracks:
-            print(song,co)
-            # if song == co:
-            #     print(co)
-            #     print(song)
-                # return render_template('upload.html')
+@views.route('/search',methods=['GET','POST'])
+def search():
+    tracks = Track.query.all()
+    return render_template("search.html",tracks=tracks)
+        # for song in tracks:
+        #     # print(song.track_location,co)
+        #     if song.track_location == co:
+        #         # print(1111111)
+        #         # print(song)
+        #         render_template("search.html",tracks=tracks)
         
-        return render_template('home.html')
+        # return render_template('search.html')
 # def new():
 # 	string=""
 	# co=request.form['give']
@@ -165,3 +167,9 @@ def download():
             return send_file(path+sep+co, as_attachment=True)
         except Exception as e:
             return str(e)
+        
+#Map
+@views.route('/map',methods=['GET','POST'])
+def map():
+    tracks = Track.query.all()
+    return render_template("map.html",tracks=tracks)

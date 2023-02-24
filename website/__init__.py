@@ -7,13 +7,7 @@ from flask_uploads import UploadSet, configure_uploads, AUDIO, UploadNotAllowed
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
-# # database config
-# project_dir = os.path.dirname(os.path.abspath(__file__))
-# db_file = "sqlite:///{}".format(os.path.join(project_dir, "flaskify.db"))
-# views.config["SQLALCHEMY_DATABASE_URI"] = db_file
-# views.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False 	
-# db = SQLAlchemy(views)
-
+# database config
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'

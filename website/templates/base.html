@@ -34,7 +34,10 @@
           <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
           <a class="nav-item nav-link" id="listen" href="/listen">Listen</a>
           <a class="nav-item nav-link" id="update" href="/update">Upload</a>
-          <a class="nav-item nav-link" id="download" href="/download">Download/</a>
+          <a class="nav-item nav-link" id="download" href="/download">Download</a>
+          <a class="nav-item nav-link" id="map" href="/map">Map</a>
+          <a class="nav-item nav-link" id="search" href="/search">Search</a>
+          <a class="nav-item nav-link" id="note" href="/note">Notes</a>
           {% else %}
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
@@ -42,12 +45,7 @@
           
           {% endif %}
           
-          <form action="/new" class="navbar-form navbar-left" method="POST">
-            <div class="form-group">
-              <input type="text" class="form-control" name="give" placeholder="Search">
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-          </form>
+        
         </div>
       </div>
     </nav>
