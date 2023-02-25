@@ -34,20 +34,19 @@
           <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
           <a class="nav-item nav-link" id="listen" href="/listen">Listen</a>
           <a class="nav-item nav-link" id="update" href="/update">Upload</a>
-          <a class="nav-item nav-link" id="download" href="/download">Download</a>
           <a class="nav-item nav-link" id="map" href="/map">Map</a>
           <a class="nav-item nav-link" id="search" href="/search">Search</a>
-          <a class="nav-item nav-link" id="note" href="/note">Notes</a>
+          <a class="nav-item nav-link" id="note" href="/note">Notes</a>          
           {% else %}
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
           <a class="nav-item nav-link" id="listen" href="/login">Listen</a>
-          
           {% endif %}
           
         
         </div>
       </div>
+      <div float="right" >Welcome {{user.first_name}} </div>
     </nav>
 
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -85,17 +84,6 @@
       crossorigin="anonymous"
     ></script>
 
-{% block javascript %}
-    <script type="text/javascript">
-      function deleteNote(noteId) {
-  fetch("/delete-note", {
-    method: "POST",
-    body: JSON.stringify({ noteId: noteId }),
-  }).then((_res) => {
-    window.location.href = "/";
-  });
-  }
-</script>
-{% endblock %}
+
   </body>
 </html>

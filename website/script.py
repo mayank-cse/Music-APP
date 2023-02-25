@@ -9,7 +9,6 @@ class TrackInfo:
         title = tag.title
         artist = tag.artist
         track_lenght = tag.duration
-
         results = {
             "title": title,
             "artist": artist,

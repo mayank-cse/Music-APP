@@ -1,3 +1,5 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} 
+{% block content %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -11,8 +13,13 @@
 					<h1 class="h1" style="color:#007bff;">update your library</h1>
 				</div>
 				<div class="cutstom-file"><input type="file" name="audio" id="ent" class="btn btn-primary"></div>
+				<br>
+				<label for="song_lang">Please tell the language of song : </label>
+				<input type="text" id="song_lang" class = "song_lang" name="song_lang" placeholder="Tamil/Punjabi..."><br>
+				<br>
 				<input class="btn btn-outline-dark" type="submit" id="sub">
 				<div class="card-footer text-muted"></div>
 			</form>
 		</body>
 	</html>
+	{% endblock %}

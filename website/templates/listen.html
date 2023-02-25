@@ -1,3 +1,6 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %}
+{% block content %}
+    <h1>Welcome {{user.first_name}} </h1> 
 <html>
   <head>
     <title>listen</title>
@@ -15,16 +18,16 @@
 
     <div class="card-deck">
       <div class="card">
-        <!-- {# -->
-        <img
+        
+              
+        <div class="card-body block" style="width:40%; height:15em;">
+          <!-- <img
           src="{{url_for('static', filename='images/album-art.jpg')}}"
           class="card-img-top"
           alt="art"
-        />
-        <!-- #} -->
-        <div class="card-body block" style="width:33%; height:10em;">
+          /> -->
           <p style="text-align: center;">
-            track: {{song.track_title}}
+            track: <a href="/search/{{song.track_title}}">{{song.track_title}}</a>
           </p>
           <div class="container">
             <audio controls class="card-text">
@@ -32,9 +35,18 @@
                 <source class="block" src="{{url_for('static', filename='songs/' + song.track_location) }}">  
               
             </audio>
+            
+            <a href="/delete_playlist/{{song.track_title}}" class="btn btn-default pull-right">DELETE</a>
+            
             <form action="/download" class="navbar-form navbar-left" method="POST">
+              <br>
               <div class="filen"><button type="submit" name="download" value={{song.track_location}} id="download" class="btn btn-primary">DOWNLOAD</button></div>
             </form>
+            <br>
+            <form action="/share" class="navbar-form navbar-right" method="POST" >
+              <div class="filen"><button type="submit" name="share" value={{song.track_title}} id="share" class="btn btn-primary">SHARE</button></div>
+            </form>
+            
           </div>
         </div>
       </div>
@@ -47,3 +59,4 @@
 
   </body>
 </html>
+{% endblock %}

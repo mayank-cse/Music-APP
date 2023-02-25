@@ -1,3 +1,5 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %}
+{% block content %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +7,8 @@
 </head>
 <body>
 	<h1>India Map</h1>
-
+	<h3>SELECT THE REGION YOU WANT TO HERE THE NEXT SONG FROM🤩</h3>
+	<h5>Currently only Andhra Pradesh, Tamil Nadu and karnataka are linked</h5>
 	<img src="{{url_for('static', filename='images/indiamap.png')}}" usemap="#india" alt="map of India" heightwidth = "400" height = "400"/>
 	<map name="india">
 		<!-- <area shape="rect" coords="350,60,430,110" href="https://en.wikipedia.org/wiki/New_Delhi" alt="New Delhi">
@@ -22,3 +25,4 @@
 	</map>
 </body>
 </html>
+{% endblock %}

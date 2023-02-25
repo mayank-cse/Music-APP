@@ -24,6 +24,7 @@ class Track(db.Model):
     track_artist = db.Column(db.String(30), nullable=False)
     track_location = db.Column(db.String(130), nullable=False)
     track_duration = db.Column(db.Integer, nullable=False)
-
+    # track_language = db.Column(db.String(30), nullable=False)
+    
     def __repr__(self):
         return '<Track: {}>'.format(self.track_title)

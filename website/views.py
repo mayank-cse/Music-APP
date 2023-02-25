@@ -1,4 +1,4 @@
-from flask import current_app
+from flask import current_app,url_for,redirect
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user,logout_user
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -16,10 +16,17 @@ from bs4 import BeautifulSoup
 from sqlalchemy import create_engine
 views = Blueprint('views', __name__)
 
+@views.route('/', methods = ['GET','POST'])
+@login_required
+def home():
+    # if request.method == 'POST':
+    tracks = Track.query.all()
+    return render_template("dashboard.html",tracks=tracks, user=current_user)
+
 
 @views.route('/note', methods=['GET', 'POST'])
 @login_required
-def home():
+def notes():
     if request.method == 'POST': 
         note = request.form.get('note')#Gets the note from the HTML 
 
@@ -31,15 +38,9 @@ def home():
             db.session.commit()
             flash('Note added!', category='success')
 
-    return render_template("home.html", user=current_user)
+    return render_template("notes.html", user=current_user)
 
 
-@views.route('/', methods = ['GET','POST'])
-@login_required
-def dashboard():
-    # if request.method == 'POST':
-    tracks = Track.query.all()
-    return render_template("dashboard.html",tracks=tracks, user=current_user)
 
 @views.route('/delete-note', methods=['POST'])
 def delete_note():  
@@ -59,7 +60,7 @@ def listen():
     tracks = Track.query.all()
     # for song in tracks:
     #     print(song)
-    return render_template("listen.html",tracks=tracks)
+    return render_template("listen.html",tracks=tracks,user=current_user)
 
 
 audio = UploadSet("audio", AUDIO)
@@ -91,6 +92,7 @@ def update():
                     track_artist=artist,
                     track_location=uploaded_track_path,
                     track_duration=duration,
+                    # track_locatio
                 )
                 db.session.add(new_track)
                 db.session.commit()
@@ -99,63 +101,79 @@ def update():
                 file = path + sep + uploaded_track_path
                 os.remove(file)
 
-            return filename + " " + "has been added to the library"
+            flash(filename + " " + "has been added to the library")
+            tracks = Track.query.all()
+            return render_template("dashboard.html", user=current_user, tracks=tracks)
         except UploadNotAllowed as err:
 
             return "<h1>sorry file type is not allowed :( </h1>", 406
 
-    return render_template("upload.html")
+    return render_template("upload.html", user=current_user)
 
 
 #search
 @views.route('/search',methods=['GET','POST'])
 def search():
     tracks = Track.query.all()
-    return render_template("search.html",tracks=tracks)
-        # for song in tracks:
-        #     # print(song.track_location,co)
-        #     if song.track_location == co:
-        #         # print(1111111)
-        #         # print(song)
-        #         render_template("search.html",tracks=tracks)
-        
-        # return render_template('search.html')
-# def new():
-# 	string=""
-	# co=request.form['give']
-# 	song=co
-# 	song_name=co+'.mp3'
-    
-# 	cur=db.connection.cursor()
-    
-# 	result=cur.execute("SELECT * FROM songs_list WHERE song_name=%s",[song_name])
-# 	albu69=cur.fetchall()
-    
-# 	if result>0:
-# 		return render_template('search.html',albu=albu69)
-# 	else:
-# 		try:
-# 			page = request.get("https://www.youtube.com/results?search_query="+song)
-# 			soup = BeautifulSoup(page.text,'html.parser')
-# 			for div in soup.find_all('div', { "class" : "yt-lockup-video" }):
-# 				if div.get("data-context-item-id") != None:
-# 					video_id = div.get("data-context-item-id")
-# 					break
-# 			os.system('youtube-dl --extract-audio --audio-format mp3 -o "akhil.mp3" https://www.youtube.com/watch?v='+video_id)
-# 			os.system("mv *.mp3 ./static/music/")
-# 			os.rename("static/music/akhil.mp3","static/music/"+song_name)
-# 			string="/static/music/"+song_name
-# 			cur=db.connection.cursor()
-# 			cur.execute("INSERT INTO songs_list(path,album,song_name) VALUES (%s,%s,%s)",(string,"NA",song_name))
-# 			db.connection.commit()
-# 			result=cur.execute("SELECT * FROM songs_list WHERE song_name=%s",[song_name])
-# 			albu99=cur.fetchall()
-# 			return render_template('search.html',albu=albu99)
-        
-# 		except NameError:
-# 			flash('Song Not Found','success')
-# 			return render_template('dashboard.html')
+    return render_template("search.html",tracks=tracks, user=current_user)
 
+@views.route('/search/<string:idd>',methods=['GET','POST'])
+# @is_logged_in
+def ytsearch(idd):
+    # print(1)
+    # if request.method == 'POST':
+    tracks = Track.query.filter_by(track_title=idd).all()
+    # print(tracks)
+    # db.session.delete(tracks)
+    # db.session.commit()
+    # # flash("Playlist successfully deleted",'success')
+    # tracks = Track.query.all()
+    return render_template("song.html", tracks = tracks, user=current_user)
+# @views.route('/ytsearch/<string:song>',methods=['GET','POST'])   
+# def ytSearch(idd):
+# 	string=""
+# 	song=idd
+# 	song_name=song +'.mp3'
+#     # print(song_name)
+#     tracks = Track.query.filter_by(track_title=song).first()
+# 	# cur=db.connection.cursor()
+    
+# 	# # result=cur.execute("SELECT * FROM songs_list WHERE song_name=%s",[song_name])
+# 	# # albu69=cur.fetchall()
+#     # tracks = Track.query.all()
+# 	# if result>0:
+# 	# 	return render_template('search.html',albu=albu69)
+# 	# else:
+# 	# 	try:
+# 	# 		page = request.get("https://www.youtube.com/results?search_query="+song)
+# 	# 		soup = BeautifulSoup(page.text,'html.parser')
+# 	# 		for div in soup.find_all('div', { "class" : "yt-lockup-video" }):
+# 	# 			if div.get("data-context-item-id") != None:
+# 	# 				video_id = div.get("data-context-item-id")
+# 	# 				break
+# 	# 		os.system('youtube-dl --extract-audio --audio-format mp3 -o "akhil.mp3" https://www.youtube.com/watch?v='+video_id)
+# 	# 		os.system("mv *.mp3 ./static/music/")
+# 	# 		os.rename("static/music/akhil.mp3","static/music/"+song_name)
+# 	# 		string="/static/music/"+song_name
+# 	# 		cur=db.connection.cursor()
+# 	# 		cur.execute("INSERT INTO songs_list(path,album,song_name) VALUES (%s,%s,%s)",(string,"NA",song_name))
+# 	# 		db.connection.commit()
+# 	# 		result=cur.execute("SELECT * FROM songs_list WHERE song_name=%s",[song_name])
+# 	# 		albu99=cur.fetchall()
+# 	# 		return render_template('search.html',albu=albu99)
+        
+# 	# 	except NameError:
+# 	# 		flash('Song Not Found','success')
+# 	# 		return render_template('home.html')
+@views.route('/share', methods=["GET","POST"])
+def share():
+    if request.method == "POST":
+        co = request.form['share']
+        # print(f"{redirect(url_for('views.search'))}")
+        
+        # flash('you are now logout','success')
+	    # return redirect(url_for('login'))
+    return render_template('home.html', user = current_user)
 sep = os.path.sep
 path = os.getcwd() + os.path.join(sep, "website"+sep+"static" + sep, "songs")
 # Download
@@ -172,4 +190,17 @@ def download():
 @views.route('/map',methods=['GET','POST'])
 def map():
     tracks = Track.query.all()
-    return render_template("map.html",tracks=tracks)
+    return render_template("map.html",tracks=tracks, user=current_user)
+
+@views.route('/delete_playlist/<string:idd>',methods=['GET','POST'])
+# @is_logged_in
+def delete_playlist(idd):
+    # print(1)
+    # if request.method == 'POST':
+    tracks = Track.query.filter_by(track_title=idd).first()
+    # print(tracks)
+    db.session.delete(tracks)
+    db.session.commit()
+    # flash("Playlist successfully deleted",'success')
+    tracks = Track.query.all()
+    return render_template("listen.html", tracks = tracks, user=current_user)

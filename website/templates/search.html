@@ -1,3 +1,5 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} 
+{% block content %}
 <html>
   <head>
     <title>Search</title>
@@ -11,15 +13,36 @@
     <meta name="viewport" content="width=device-width", initial-scale=1.0"/>
   </head>
   <body style="background-color: white;">
+    <br>
+    <label for="live-search-box">Search your next song : </label>
     <input type="text" class="live-search-box" placeholder="search here" />
-  
+    <br> <br>
     <ul class="live-search-list" id="UnList"type="None"> 
     {% for song in tracks %}
         <!-- <p onload="makeList(tracks)"></p>
     <form>
         <input type="submit" value={{song.track_location}} id="btnRun" onclick="makeList(tracks);" >
     </form> -->
-        <li><a href="/listen">{{song.track_title}}</a></li>
+        <li>
+            <!-- <a href="/search/{{song.track_title}}">{{song.track_title}}</a> -->
+            
+            <div class="card-body block" style="width:40%; height:7em;">
+                <!-- <img
+                src="{{url_for('static', filename='images/album-art.jpg')}}"
+                class="card-img-top"
+                alt="art"
+                /> -->
+                <p style="text-align: center;">
+                  track: <a href="/search/{{song.track_title}}">{{song.track_title}}</a><br>
+                  Artist: {{song.track_artist}}<br>
+                  Duration: {{song.track_duration}} Seconds
+                </p>
+            <div class="container">
+                        
+                  
+                  
+                </div> 
+        </li>
     {% endfor %}
     </ul>   
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
@@ -52,3 +75,4 @@ var searchTerm = $(this).val().toLowerCase();
   
 </body>
 </html>
+{% endblock %}
