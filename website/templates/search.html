@@ -18,7 +18,7 @@
     <input type="text" class="live-search-box" placeholder="search here" />
     <br> <br>
     <ul class="live-search-list" id="UnList"type="None"> 
-    {% for song in tracks %}
+    {% for song in user.tracks %}
         <!-- <p onload="makeList(tracks)"></p>
     <form>
         <input type="submit" value={{song.track_location}} id="btnRun" onclick="makeList(tracks);" >
@@ -35,6 +35,7 @@
                 <p style="text-align: center;">
                   track: <a href="/search/{{song.track_title}}">{{song.track_title}}</a><br>
                   Artist: {{song.track_artist}}<br>
+                  language: {{song.track_language}}<br>
                   Duration: {{song.track_duration}} Seconds
                 </p>
             <div class="container">

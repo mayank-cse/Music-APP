@@ -12,7 +12,7 @@
 		<th>PLAYLIST NAME</th>
 		<th></th>
 	</tr>
-	{% for song in tracks %}
+	{% for song in user.tracks %}
 	<tr>
 		<td><a href="play_playlist/{{song.id}}"  class="btn btn-default">{{song.title}}</a></td>
 

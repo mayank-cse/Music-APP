@@ -8,9 +8,14 @@
       <li class="list-group-item">
         {{ note.data }}
         <!-- {{note.id}} -->
-        <button type="button" class="close" onClick="deleteNote()">
+        <form method="POST" action="/delete_note/{{note.id}}">
+          <button type="submit" id="noteId" value ="{{note.id}}" class="close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </form>
+        <!-- <button type="button" class="close" action= "/delete_note" onClick="views.delete_note()">
           <span aria-hidden="true">&times;</span>
-        </button>
+        </button> -->
       </li>
       {% endfor %}
     </ul>

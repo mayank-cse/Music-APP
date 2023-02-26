@@ -5,7 +5,7 @@ from flask_login import LoginManager
 from flask_uploads import UploadSet, configure_uploads, AUDIO, UploadNotAllowed
 
 db = SQLAlchemy()
-DB_NAME = "database.db"
+DB_NAME = "mg2.db"
 
 # database config
 def create_app():

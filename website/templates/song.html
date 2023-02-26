@@ -1,11 +1,12 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %}
 {% block content %}
-    <h1>Welcome {{user.first_name}} </h1> 
+    
 <html>
   <head>
     <title>listen</title>
     <style>
-    .id1 {
+    body {
+
         background-image: url("{{url_for('static', filename='images/album-art.jpg')}}");
         background-repeat: no-repeat;
         background-attachment: fixed;
@@ -23,20 +24,24 @@
   </head>
   <body style="background-color: white;">
     {% for song in tracks %}
-    
+    <h1 style="color:gold; text-align: center;">Enjoy listen to "{{song.track_title}}" </h1> 
     <div class="card-deck" >
       <div class="card">
-        
-              
-        <div class="card-body block" style="width:40%; height:15em;">
+                    
+        <div class="card-body block" style="width:98%; height:21em;">
           <!-- <img
           src="{{url_for('static', filename='images/album-art.jpg')}}"
           class="card-img-top"
           alt="art"
           /> -->
           
+          
           <p style="text-align: center;">
-            track: {{song.track_title}}
+            Track: {{song.track_title}}<br>
+            Artist: {{song.track_artist}}<br>
+            Language: {{song.track_language}}<br>
+            Duration: {{song.track_duration}}
+            
           </p>
           <div class="container">
             <audio controls class="card-text">
@@ -44,21 +49,27 @@
                 <source class="block" src="{{url_for('static', filename='songs/' + song.track_location) }}">  
               
             </audio>
-            
-            <a href="/delete_playlist/{{song.track_title}}" class="btn btn-default pull-right">DELETE</a>
-            
+          <div style="text-align: top-right;">
+            <a href="/delete_playlist/{{song.track_title}}" class="navbar-form navbar-right">DELETE</a>
+            <p><a href="/note" class="navbar-form navbar-right">Pen down your thoughts about "{{song.track_title}}" song</a></p>
+          </div>  
             <form action="/download" class="navbar-form navbar-left" method="POST">
               <br>
               <div class="filen"><button type="submit" name="download" value={{song.track_location}} id="download" class="btn btn-primary">DOWNLOAD</button></div>
             </form>
             <br>
-            <form action="/share" class="navbar-form navbar-right" method="POST" >
+            <form action="/share" class="navbar-form navbar-left" method="POST" >
               <div class="filen"><button type="submit" name="share" value={{song.track_title}} id="share" class="btn btn-primary">SHARE</button></div>
             </form>
             
+            
           </div>
+      
         </div>
+      
       </div>
+      <img src="{{ url_for('static', filename='images/art-album.jpg')}}" width="200" align="right">
+      
     </div>
 
    

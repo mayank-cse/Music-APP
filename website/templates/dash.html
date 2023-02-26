@@ -1,0 +1,104 @@
+{% extends "base.html" %} {% block title %}Profile View{% endblock %} 
+    {% block content %}
+    <h1>Welcome {{user.first_name}} </h1>
+
+
+
+	<h2 align="center">Dashboard</h2>
+	<br/>
+
+	<div class="card">
+  <div class="card-header">
+    {{ current_user.first_name }}
+  </div>
+  <div class="card-body">
+   
+    <p class="card-text">
+
+<div class="container">
+	<div class="row">
+		<div class="col-8">
+
+    <strong>Name:</strong>
+	{{ current_user.first_name }}<br/>
+
+	<strong>Mobile Number:</strong>
+	{{ current_user.username }}<br/>
+
+	<strong>User Id:</strong>
+	{{ current_user.id }}<br/>
+
+	<strong>Email:</strong>
+	{{ current_user.email }}<br/>
+
+	<strong>Number of Songs Uploaded :</strong>
+	{{ countTracks }} Tracks <br/>
+
+	<strong>Number of Notes Added :</strong>
+	{{ countNotes }} Notes <br/>
+
+
+
+
+	
+	
+
+    	
+    </p>
+    <a href="{{ url_for('auth.logout')}}" class="btn btn-secondary btn-sm">Logout</a>
+
+    <br/><br/>
+
+    
+	</div>
+	<div class="col-4">
+		{% if current_user.profile_pic %}
+
+		<img src="{{ url_for('static', filename='images/' + current_user.profile_pic)}}" width="200" align="right">
+		
+		{% else %}
+
+		<img src="{{ url_for('static', filename='images/art-album.jpg')}}" width="200" align="right">
+
+		{% endif %}
+	
+	</div>
+	</div>
+	</div>
+
+
+  </div>
+</div>
+	
+
+	
+<br/>
+
+<div class="card">
+  <div class="card-header">
+    Update Profile
+  </div>
+  <div class="card-body">
+
+  	<form action="/profile-update" method="POST" enctype="multipart/form-data">
+		<label for="name">Enter the name : </label>
+        <input type="text" id="name" class="name" name="name"><br><br>
+
+        <label for="email">Enter the email : </label>
+        <input type="text" id="email" class="email" name="email"><br><br>
+
+        <input type = "submit" value = "Update Profile">
+	</form>
+
+
+
+</div>
+
+	
+	
+
+
+</div>
+
+
+{% endblock %} 
