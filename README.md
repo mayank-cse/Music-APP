@@ -181,3 +181,10 @@ Tutorial
 
 
 ## Changelog
+- Version 2.1 : Profile view and update
+- Version 2.0 : add SQL ORM extension: FLASK-SQLAlchemy
+- Version 1.4 : Note|Map|Dashboard Feature Added
+- Version 1.3 : Added Live Search Function
+- Version 1.2 : Download Feature Added
+- Version 1.1 : song upload and play integrated
+- Version 1.0 : Authentication Page
