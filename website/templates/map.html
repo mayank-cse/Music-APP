@@ -6,22 +6,16 @@
 	<title>India Map</title>
 </head>
 <body>
-	<h1>India Map</h1>
+	<h1>Musical map of India</h1>
 	<h3>SELECT THE REGION YOU WANT TO HERE THE NEXT SONG FROM🤩</h3>
 	<h5>Currently only Andhra Pradesh, Tamil Nadu and karnataka are linked</h5>
 	<img src="{{url_for('static', filename='images/indiamap.png')}}" usemap="#india" alt="map of India" heightwidth = "400" height = "400"/>
 	<map name="india">
-		<!-- <area shape="rect" coords="350,60,430,110" href="https://en.wikipedia.org/wiki/New_Delhi" alt="New Delhi">
-		<area shape="rect" coords="320,220,390,260" href="https://en.wikipedia.org/wiki/Mumbai" alt="Mumbai">
-		<area shape="rect" coords="190,360,250,410" href="https://en.wikipedia.org/wiki/Kolkata" alt="Kolkata">
-		<area shape="rect" coords="230,160,290,200" href="https://en.wikipedia.org/wiki/Bengaluru" alt="Bengaluru">
-		<area shape="rect" coords="80,230,140,270" href="https://en.wikipedia.org/wiki/Chennai" alt="Chennai">
-		<area shape="rect" coords="90,50,160,90" href="https://en.wikipedia.org/wiki/Chandigarh" alt="Chandigarh">
-		<area shape="rect" coords="470,190,530,230" href="https://en.wikipedia.org/wiki/Hyderabad" alt="Hyderabad"> -->
-		<area href = "andhra.html" shape = "rect" coords = "180,224,150,300" alt = "goto andhra"> 
-		<area href = "karnataka.html" shape = "rect" coords = "120,244,130,315" alt = "goto karnataka">
-		<area href = "tamilnadu.html" shape = "rect" coords = "180,364,150,320" alt = "goto tamilnadu">
-		<area href = "kerala.html" shape ="rect" coords = "120,364,130,320" alt = "goto kerala">
+		<area shape="rect" coords="90,50,160,90" href="/search/language/Punjabi" alt="Punjabi Songs">
+		<area href = "/search/language/Andhra" shape = "rect" coords = "180,224,150,300" alt = "goto andhra"> 
+		<area href = "/search/language/Karnatak" shape = "rect" coords = "120,244,130,315" alt = "goto karnatak Songs">
+		<area href = "/search/language/Tamil" shape = "rect" coords = "180,364,150,320" alt = "goto tamil songs">
+		<area href = "/search/language/Kerala" shape ="rect" coords = "120,364,130,320" alt = "goto kerala">
 	</map>
 </body>
 </html>

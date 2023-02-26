@@ -28,13 +28,8 @@
     <div class="card-deck" >
       <div class="card">
                     
-        <div class="card-body block" style="width:98%; height:21em;">
-          <!-- <img
-          src="{{url_for('static', filename='images/album-art.jpg')}}"
-          class="card-img-top"
-          alt="art"
-          /> -->
-          
+        <div class="card-body block" style="width:98%; height:25em;">
+         
           
           <p style="text-align: center;">
             Track: {{song.track_title}}<br>
@@ -58,7 +53,7 @@
               <div class="filen"><button type="submit" name="download" value={{song.track_location}} id="download" class="btn btn-primary">DOWNLOAD</button></div>
             </form>
             <br>
-            <form action="/share" class="navbar-form navbar-left" method="POST" >
+            <form action="/share/{{song.track_title}}" class="navbar-form navbar-left" method="POST" >
               <div class="filen"><button type="submit" name="share" value={{song.track_title}} id="share" class="btn btn-primary">SHARE</button></div>
             </form>
             
@@ -68,7 +63,7 @@
         </div>
       
       </div>
-      <img src="{{ url_for('static', filename='images/art-album.jpg')}}" width="200" align="right">
+      <img src="{{ url_for('static', filename='images/guitar.jpg')}}"  align="right">
       
     </div>
 

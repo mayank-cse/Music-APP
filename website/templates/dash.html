@@ -1,10 +1,20 @@
 {% extends "base.html" %} {% block title %}Profile View{% endblock %} 
     {% block content %}
-    <h1>Welcome {{user.first_name}} </h1>
+
+	<style>
+		body {
+
+			background-image: url("{{url_for('static', filename='images/disco2.jpg')}}");
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-size: 100% 100%;
+		}
+	</style>
+    <strong><h1 style="color: whitesmoke;">Welcome {{user.first_name}} </h1></strong>
 
 
 
-	<h2 align="center">Dashboard</h2>
+	<bold><h2 align="center" style="color: white;">Dashboard</h2></bold>
 	<br/>
 
 	<div class="card">
@@ -58,7 +68,7 @@
 		
 		{% else %}
 
-		<img src="{{ url_for('static', filename='images/art-album.jpg')}}" width="200" align="right">
+		<img src="{{ url_for('static', filename='images/headbook.avif')}}" width="350" align="right">
 
 		{% endif %}
 	

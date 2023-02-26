@@ -1,21 +1,26 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
     %}
-    
-    <h1 float="center">Welcome {{session.username}} </h1>
-    <h1 align="center">Notes</h1>
+    <style>
+      body {
+  
+        background-image: url("{{url_for('static', filename='images/disco2.jpg')}}");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: 100% 100%;
+      }
+    </style>
+    <h1 align="center" style="color: gold;">Pen down your thoughts about your favourite music📝</h1>
+    <h1 align="center" style="color: greenyellow;">Notes</h1>
     <ul class="list-group list-group-flush" id="notes">
       {% for note in user.notes %}
       <li class="list-group-item">
         {{ note.data }}
-        <!-- {{note.id}} -->
         <form method="POST" action="/delete_note/{{note.id}}">
           <button type="submit" id="noteId" value ="{{note.id}}" class="close">
             <span aria-hidden="true">&times;</span>
           </button>
         </form>
-        <!-- <button type="button" class="close" action= "/delete_note" onClick="views.delete_note()">
-          <span aria-hidden="true">&times;</span>
-        </button> -->
+        
       </li>
       {% endfor %}
     </ul>

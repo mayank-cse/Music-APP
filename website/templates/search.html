@@ -10,28 +10,29 @@
       type="text/css"
       href="{{url_for('static', filename='css/blocks.min.css') }}"
     />
+    <style>
+        body {
+    
+            background-image: url("{{url_for('static', filename='images/album-art.jpg')}}");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: 100% 100%;
+          }
+    </style>
     <meta name="viewport" content="width=device-width", initial-scale=1.0"/>
   </head>
   <body style="background-color: white;">
     <br>
-    <label for="live-search-box">Search your next song : </label>
-    <input type="text" class="live-search-box" placeholder="search here" />
+    <h3><label for="live-search-box">Search your next song : </label>
+    <input type="text" class="live-search-box" placeholder="search here" /></h3>
     <br> <br>
     <ul class="live-search-list" id="UnList"type="None"> 
     {% for song in user.tracks %}
-        <!-- <p onload="makeList(tracks)"></p>
-    <form>
-        <input type="submit" value={{song.track_location}} id="btnRun" onclick="makeList(tracks);" >
-    </form> -->
+        
         <li>
-            <!-- <a href="/search/{{song.track_title}}">{{song.track_title}}</a> -->
             
-            <div class="card-body block" style="width:40%; height:7em;">
-                <!-- <img
-                src="{{url_for('static', filename='images/album-art.jpg')}}"
-                class="card-img-top"
-                alt="art"
-                /> -->
+            <div class="card-body block" style="width:40%; height:10em;">
+               
                 <p style="text-align: center;">
                   track: <a href="/search/{{song.track_title}}">{{song.track_title}}</a><br>
                   Artist: {{song.track_artist}}<br>

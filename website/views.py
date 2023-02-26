@@ -3,14 +3,13 @@ from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user,logout_user
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask import send_file, send_from_directory
-from .models import Note, Track
+from .models import Note, Track, User
 from . import db
 import json
 from flask_uploads import UploadSet, configure_uploads, AUDIO, UploadNotAllowed
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from .script import TrackInfo
-from dotenv import load_dotenv
 import os
 from bs4 import BeautifulSoup
 from sqlalchemy import create_engine
@@ -19,9 +18,7 @@ views = Blueprint('views', __name__)
 @views.route('/', methods = ['GET','POST'])
 @login_required
 def home():
-    # if request.method == 'POST':
     tracks = Track.query.filter_by(user_id=current_user.id).all()
-    # print(len(tracks))
     Notes = Note.query.filter_by(user_id=current_user.id).all()
     return render_template("dash.html",tracks=tracks, Notes = Notes, user=current_user,countTracks = len(tracks), countNotes = len(Notes))
 
@@ -47,38 +44,26 @@ def notes():
 @views.route('/delete_note/<string:idd>', methods=['POST'])
 @login_required
 def delete_note(idd):  
-    print(1)
+    # print(1)
     
     noteId = idd
-    # request.form['noteId']
-    print(noteId)
-    note = Note.query.filter_by(id = noteId).first()
-    print(note)
+    note = Note.query.filter_by(id = noteId, user_id=current_user.id).first()
+
     if note:
-        if note.user_id == current_user.id:
-            db.session.delete(note)
-            db.session.commit()
-            flash("Note successfully deleted",'success')
+        db.session.delete(note)
+        db.session.commit()
+        flash("Note successfully deleted",'success')
     else:
         flash("Unable to find the note")
-    notes = Note.query.all(user_id)
+    notes = Note.query.filter_by(user_id=current_user.id).all()
     return render_template("notes.html", notes=notes, user=current_user)
-#     return jsonify({})
-# notes = Note.query.filter_by(Note.id = idd).first()
-#     # print(tracks)
-#     db.session.delete(tracks)
-#     db.session.commit()
-#     # flash("Playlist successfully deleted",'success')
-#     tracks = Track.query.all()
-    return render_template("listen.html", tracks = tracks, user=current_user)
+
 
 
 @views.route("/listen", methods=["GET"])
 @login_required
 def listen():
     tracks = Track.query.all()
-    # for song in tracks:
-    #     print(song)
     return render_template("listen.html",tracks=tracks,user=current_user)
 
 
@@ -89,8 +74,8 @@ path = os.getcwd() + os.path.join(sep, "website"+sep+"static" + sep, "songs")
 # C:\Users\mayan\OneDrive\Desktop\AuthFlask\Music-APP-\website\static\songs\Songs.PK_Unchained_Melodies_Encore_-_03_-_Ya_Rabba_Salaam-E-Ishq_1.mp3
 @views.route("/update", methods=["GET", "POST"])
 def update():
+    
     if request.method == "POST" and "audio" in request.files:
-        # print(1111111)
         try:
             filename = audio.save(request.files["audio"])
             
@@ -105,6 +90,8 @@ def update():
                 title = track_info["title"]
                 if title == None:
                     title = "Unknown track"
+                if song_lang == None:
+                    song_lang = "Not Defined"
                 duration = track_info["track_lenght"]
                 new_track = Track(
                     track_title=title,
@@ -122,8 +109,10 @@ def update():
                 os.remove(file)
 
             flash(filename + " " + "has been added to the library")
-            tracks = Track.query.all()
-            return render_template("dashboard.html", user=current_user, tracks=tracks)
+            tracks = Track.query.filter_by(user_id=current_user.id).all()
+            Notes = Note.query.filter_by(user_id=current_user.id).all()
+            return render_template("dash.html",tracks=tracks, Notes = Notes, user=current_user,countTracks = len(tracks), countNotes = len(Notes))
+
         except UploadNotAllowed as err:
 
             return "<h1>sorry file type is not allowed :( </h1>", 406
@@ -131,26 +120,28 @@ def update():
     return render_template("upload.html", user=current_user)
 
 
-#search
+#Live Search for all the songs
 @views.route('/search',methods=['GET','POST'])
 @login_required
 def search():
-    tracks = Track.query.all()
+    tracks = Track.query.filter_by(user_id=current_user.id)
     return render_template("search.html",tracks=tracks, user=current_user)
 
+#open the specific song
 @views.route('/search/<string:idd>',methods=['GET','POST'])
 @login_required
 def ytsearch(idd):
-    # print(1)
-    # if request.method == 'POST':
     tracks = Track.query.filter_by(track_title=idd,user_id=current_user.id).all()
-    print(tracks)
-    # print(tracks)
-    # db.session.delete(tracks)
-    # db.session.commit()
-    # # flash("Playlist successfully deleted",'success')
-    # tracks = Track.query.all()
     return render_template("song.html", tracks = tracks, user=current_user)
+
+#language map
+@views.route('/search/language/<string:lang>',methods=['GET','POST'])
+@login_required
+def langsearch(lang):
+    flash(f'Enjoy listening to your favourite {lang} songs')
+    tracks = Track.query.filter_by(track_language = lang,user_id=current_user.id).all()
+    return render_template("song.html", tracks = tracks, user=current_user)
+
 # @views.route('/ytsearch/<string:song>',methods=['GET','POST'])   
 # def ytSearch(idd):
 # 	string=""
@@ -187,18 +178,24 @@ def ytsearch(idd):
 # 	# 	except NameError:
 # 	# 		flash('Song Not Found','success')
 # 	# 		return render_template('home.html')
-@views.route('/share', methods=["GET","POST"])
+
+@views.route('/share/<string:idd>/user/<string:uid>', methods=["GET","POST"])
+def shareUser(idd,uid):
+    tracks = Track.query.filter_by(track_title = idd,user_id = uid).all()
+    user = User.query.filter_by(id=uid).first()
+    flash(f'Shared by {user.first_name}' )
+    return render_template('Extview.html',tracks = tracks)
+
+#Share the song with your friends
+@views.route('/share/<string:idd>', methods=["GET","POST"])
 @login_required
-def share():
-    if request.method == "POST":
-        co = request.form['share']
-        # print(f"{redirect(url_for('views.search'))}")
-        
-        # flash('you are now logout','success')
-	    # return redirect(url_for('login'))
-    return render_template('home.html', user = current_user)
+def share(idd):
+    flash(f'Share your song with the link -> \"http://mayankgupta.pythonanywhere.com/share/{idd}/user/{current_user.id}\"')
+	   
+    return render_template('song.html', user = current_user)
 sep = os.path.sep
 path = os.getcwd() + os.path.join(sep, "website"+sep+"static" + sep, "songs")
+
 # Download
 @views.route('/download', methods=["GET","POST"])
 @login_required
@@ -216,13 +213,12 @@ def download():
 def map():
     tracks = Track.query.filter_by(user_id=current_user.id).all
     return render_template("map.html",tracks=tracks, user=current_user)
+
 #profile
 @views.route('/profile',methods=['GET','POST'])
 @login_required
 def profile():
-    # if request.method == 'POST':
     tracks = Track.query.filter_by(user_id=current_user.id).all()
-    # print(len(tracks))
     Notes = Note.query.filter_by(user_id=current_user.id).all()
     return render_template("dash.html",tracks=tracks, Notes = Notes, user=current_user,countTracks = len(tracks), countNotes = len(Notes))
 
@@ -238,18 +234,21 @@ def profile_update():
         if newEmail:
             current_user.email = newEmail
         db.session.commit()
-    return render_template("dash.html", user=current_user)
+    tracks = Track.query.filter_by(user_id=current_user.id).all()
+    Notes = Note.query.filter_by(user_id=current_user.id).all()
+    return render_template("dash.html",tracks=tracks, Notes = Notes, user=current_user,countTracks = len(tracks), countNotes = len(Notes))
+
 @views.route('/delete_playlist/<string:idd>',methods=['GET','POST'])
 @login_required
 def delete_playlist(idd):
-    # print(1)
-    # if request.method == 'POST':
     tracks = Track.query.filter_by(track_title=idd,user_id=current_user.id).first()
     if tracks.user_id == current_user.id:
             db.session.delete(tracks)
             db.session.commit()
             flash("Playlist successfully deleted",'success')
-            tracks = Track.query.filter_by(user_id=current_user.id).all
-            return render_template("listen.html", tracks = tracks, user=current_user)
+            tracks = Track.query.filter_by(user_id=current_user.id).all()
+            return render_template("song.html", tracks = tracks, user=current_user)
     
-    return render_template("dashboard.html", tracks = tracks, user=current_user)
+    tracks = Track.query.filter_by(user_id=current_user.id).all()
+    Notes = Note.query.filter_by(user_id=current_user.id).all()
+    return render_template("dash.html",tracks=tracks, Notes = Notes, user=current_user,countTracks = len(tracks), countNotes = len(Notes))
