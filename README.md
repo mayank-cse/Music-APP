@@ -54,7 +54,7 @@ $ make run
 
 Open http://127.0.0.1:5000/, customize project files and **have fun**.
 
-If you have any ideas about how to improve it [Fork project](https://github.com/mayank-cse/Music-App/fork) and send me a pull request.
+If you have any ideas about how to improve it [Fork project]https://github.com/mayank-cse/Music-APP/fork) and send me a pull request.
 
 ## Flask Application Structure 
 ```
